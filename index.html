@@ -1,0 +1,342 @@
+<html>
+<head>
+	<title>CoS test</title>
+	<link href="jquery-ui/css/smoothness/jquery-ui-1.8.20.custom.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" language="javascript" src="jquery-ui/js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" language="javascript" src="jquery-ui/js/jquery-ui-1.8.20.custom.min.js"></script>
+	<script src="assessment.js" type="text/javascript"></script>
+  <script type="text/javascript" language="javascript">
+
+    // DO THIS TO DRAW AN ASSESSMENT
+$(document).ready(function() {
+    drawAssessmentCircle();
+    // drawDomains();
+    // setInterval(drawAssessmentCircle, 100);
+
+         $('#assessmentDialog').dialog({
+             autoOpen: false,
+             buttons: {
+                 "OK": function() {
+                     var val = ($('#assessSlider').slider( "option", "value" ));
+                     $(this).dialog('close');
+                     updateSegment(val);
+                 },
+                 "Cancel": function() {
+                     $(this).dialog('close');
+                 }
+             }
+         });
+        $('#assessSlider').slider({ min: 1, max: 9, value: 5, step: 1 });
+
+        addHandler();
+        // $('#dataEntryContainer').tooltip({
+        //     track: true,
+        //     delay: 0,
+        //     bodyHandler: function() { return currentSubdomain || ''; }
+        // })
+
+});
+
+
+function drawDomains() {
+   var canvas = $("#assessmentCanvas")[0];
+   var ctx = canvas.getContext('2d');
+   ctx.fillStyle = "#000";
+   ctx.font = "20pt Myriad Pro";
+   ctx.fillText('CIRCLES OF SOCIAL LIFE', 380, 550);
+
+   ctx.font = "10pt Calibri";
+
+	var xPos = 0, yPos = 0, counter = 0;
+	
+	var domains = [ 
+		{ name: 'Economy', subdomains: ["Production & Resourcing", "Exchange & Transfer", "Accounting & Regulation", "Consumption & Use", "Labour & Welfare", "Technology & Infrastructure", "Wealth & Distribution"] },
+
+		{ name: 'Ecology', subdomains: ["Materials & Energy", "Water & Air", "Flora & Fauna", "Habitat & Settlements", "Built Form & Transport", "Embodiment & Food", "Emission & Waste"] }, 
+		
+		{ name: 'Politics', subdomains: ["Organization & Governance", "Law & Justice", "Communication & Critique", "Representation & Negotiation", "Security & Accord", "Dialogue & Reconciliation", "Ethics & Accountability"] }, 
+
+		{ name: 'Culture', subdomains: ["Identity & Engagement", "Creativity & Recreation", "Memory & Projection", "Belief & Ideas", "Gender & Generations", "Enquiry & Learning", "Health & Wellbeing"] }
+		];
+
+	for (var i = 0; i < domains.length; i++) {
+		var domain = domains[i];
+		
+	   switch(i) {
+	    case 0:
+	    xPos = 0;
+	    yPos = 20;
+	    break;
+	    case 1:
+	    xPos = 660;
+	    yPos = 20;
+	    break;
+	    case 2:
+	    xPos = 0;
+	    yPos = 480;
+	    break;
+	    case 3:
+	    xPos = 660;
+	    yPos = 480;
+	    break;
+	   }
+	   ctx.fillText(domain.name.toUpperCase(), xPos, yPos);
+	   for (var j = 0; j < domain.subdomains.length; j++) {
+	   	yPos += 15;
+	   	ctx.fillText(domain.subdomains[j], xPos, yPos);	
+	   }
+	}
+}
+
+function drawAssessmentCircle() {
+    var canvas = $("#assessmentCanvas")[0];
+    var ctx = canvas.getContext('2d');
+
+    var useSameArea = true;
+
+    var colours = ["#FF2002", "#FF7A2D", "#FFA530", "#FFC919", "#FFFB2B", "#EDFF2D", "#D1FF47", "#96FF47", "#23FF3D"];
+    var x = 400;
+    var y = 300;
+    var radius = 270;
+    ctx.lineWidth = 2;
+
+    // Circle and Area parameters
+    var numCircles = 9;
+    var maxArea = Math.pow(radius, 2) * Math.PI;
+
+    // Draw segments lines
+		for (var i = 0; i < 28; i++) {
+				var quadrant = i / 7;
+				var sector = i % 4;
+				var extent = Math.ceil(Math.random() * 9);
+        CoS.Assessment.drawSegment(ctx, quadrant, sector, extent);
+		}
+
+    // Draw 28 - 4 segment lines
+    CoS.Assessment.drawSegmentLines(ctx);
+    CoS.Assessment.drawCircles(ctx);
+    CoS.Assessment.drawAxes(ctx);
+}
+
+function addHandler() {
+    var canvas = $("#assessmentCanvas")[0];
+    canvas.addEventListener('click', function(e){
+        var x, y;
+        if (!e) var e = window.event;
+        if (e.offsetX || e.offsetY) 	{
+            x = e.offsetX;
+            y = e.offsetY;
+        }
+        else if (e.pageX || e.pageY) 	{
+            x = e.pageX;
+            y = e.pageY;
+        }
+        else if (e.clientX || e.clientY) 	{
+            x = e.clientX + document.body.scrollLeft
+                    + document.documentElement.scrollLeft;
+            y = e.clientY + document.body.scrollTop
+                    + document.documentElement.scrollTop;
+        }
+        whichSegment(x, y);
+    });
+/*
+    canvas.addEventListener('mousemove', function(e){
+        var x, y;
+        if (!e) var e = window.event;
+        if (e.offsetX || e.offsetY) 	{
+            x = e.offsetX;
+            y = e.offsetY;
+        }
+        else if (e.pageX || e.pageY) 	{
+            x = e.pageX;
+            y = e.pageY;
+        }
+        else if (e.clientX || e.clientY) 	{
+            x = e.clientX + document.body.scrollLeft
+                    + document.documentElement.scrollLeft;
+            y = e.clientY + document.body.scrollTop
+                    + document.documentElement.scrollTop;
+        }
+        showSubdomain(x, y);
+    });
+*/
+}
+
+
+function whichSegment(x, y) {
+    var canvas = $("#assessmentCanvas")[0];
+    var centerX = 400;
+    var centerY = 300;
+    var radius = 270;
+    var coordX = x - centerX;
+    var coordY = y - centerY;
+    var hypotenuse = Math.pow(Math.pow(coordX, 2) + Math.pow(coordY, 2), 0.5);
+    if (hypotenuse < radius) {
+        // Which quadrant?
+        var quadrant = 0;
+        if (coordX < 0 && coordY < 0) {
+            quadrant = 2;
+        }
+        else if (coordY < 0) {
+            quadrant = 3;
+        }
+        else if (coordX < 0) {
+            quadrant = 1;
+        }
+        else  {
+            quadrant = 0;
+        }
+        var angleInRadians = Math.atan(coordX / coordY);
+        var angle = (angleInRadians * 2 / Math.PI) * 90;
+        switch (quadrant) {
+            case 0:
+                angle = (90 - angle);
+                break;
+            case 1:
+                angle = (90 - angle);
+                break;
+            case 2:
+                angle = 180 + (90 - angle);
+                break;
+            case 3:
+                angle = 180 + (90 - angle);
+                break;
+        }
+        domainId = quadrant;
+        currentDomain = CoS.Assessment.domains[domainId];
+        subdomainId = Math.floor((angle / 360) * (4 * 7));
+        if (subdomainId < 7)
+            currentSubdomain = CoS.Assessment.culturalSubdomains[subdomainId];
+        else if (subdomainId < 14)
+            currentSubdomain = CoS.Assessment.politicalSubdomains[subdomainId - 7];
+        else if (subdomainId < 21)
+            currentSubdomain = CoS.Assessment.ecologicalSubdomains[subdomainId - 14];
+        else
+            currentSubdomain = CoS.Assessment.economicSubdomains[subdomainId - 21];
+
+        if ($('#showDialog').is(':checked')) {
+            showAssessmentDialog();
+        }
+        else {
+            var extent = Math.floor((hypotenuse / radius) * 10);
+            var useSameArea = true;
+            var numCircles = 9;
+            var maxArea = Math.pow(radius, 2) * Math.PI;
+            if (useSameArea) {
+                var newArea = Math.pow(hypotenuse, 2) * Math.PI;
+                extent = Math.ceil(newArea / maxArea * 9);
+            }
+            updateSegment(extent);
+        }
+    }
+}
+
+function showSubdomain(x, y) {
+    var canvas = $("#assessmentCanvas")[0];
+    var centerX = 400;
+    var centerY = 300;
+    var radius = 270;
+    var coordX = x - centerX;
+    var coordY = y - centerY;
+    var hypotenuse = Math.pow(Math.pow(coordX, 2) + Math.pow(coordY, 2), 0.5);
+    if (hypotenuse < radius) {
+        // Which quadrant?
+        var quadrant = 0;
+        if (coordX < 0 && coordY < 0) {
+            quadrant = 2;
+        }
+        else if (coordY < 0) {
+            quadrant = 3;
+        }
+        else if (coordX < 0) {
+            quadrant = 1;
+        }
+        else  {
+            quadrant = 0;
+        }
+        var angleInRadians = Math.atan(coordX / coordY);
+        var angle = (angleInRadians * 2 / Math.PI) * 90;
+        switch (quadrant) {
+            case 0:
+                angle = (90 - angle);
+                break;
+            case 1:
+                angle = (90 - angle);
+                break;
+            case 2:
+                angle = 180 + (90 - angle);
+                break;
+            case 3:
+                angle = 180 + (90 - angle);
+                break;
+        }
+        domainId = quadrant;
+        currentDomain = CoS.Assessment.domains[domainId];
+        subdomainId = Math.floor((angle / 360) * (4 * 7));
+        if (subdomainId < 7)
+            currentSubdomain = CoS.Assessment.culturalSubdomains[subdomainId];
+        else if (subdomainId < 14)
+            currentSubdomain = CoS.Assessment.politicalSubdomains[subdomainId - 7];
+        else if (subdomainId < 21)
+            currentSubdomain = CoS.Assessment.ecologicalSubdomains[subdomainId - 14];
+        else
+            currentSubdomain = CoS.Assessment.economicSubdomains[subdomainId - 21];
+
+    }
+    console.log(currentSubdomain)
+//        $('#assessmentCanvas').tooltip({
+//            track: true,
+//            delay: 0,
+//            showURL: false,
+//            bodyHandler: function() {
+//                return currentSubdomain;
+//            }
+//        })
+}
+
+function showAssessmentDialog() {
+    $('#assessDomain').html(currentDomain);
+    $('#assessSubdomain').html(currentSubdomain);
+    $('#assessmentDialog').dialog('open');
+}
+
+function updateSegment(value) {
+   saveAssessment(value);
+   var canvas = $("#assessmentCanvas")[0];
+   var ctx = canvas.getContext('2d');
+   CoS.Assessment.drawSegment(ctx, domainId, subdomainId % 7, value);
+   CoS.Assessment.drawSegmentLines(ctx);
+   CoS.Assessment.drawCircles(ctx);
+   CoS.Assessment.drawAxes(ctx);
+}
+
+function saveAssessment(value) {
+}
+
+
+</script>
+
+</head>
+<body>
+
+  <input type="checkbox" id="showDialog" name="showDialog"> Show dialog
+	<div>
+	    <canvas id="assessmentCanvas" width="800" height="600" ></canvas>
+	</div>
+
+<div id="assessmentDialog" style="display: none;">
+    <div>
+        <label for="assessDomain">Domain</label>
+        <span id="assessDomain"></span>
+    </div>
+    <div>
+        <label for="assessSubdomain">Subdomain</label>
+        <span id="assessSubdomain"></span>
+    </div>
+
+    <div>Rate how sustainable you think your project is against this subdomain, on a scale of 1 (least sustainable) to 9 (most sustainable):</div>
+    <div id="assessSlider"></div>
+</div>
+
+</body>
+</html>
