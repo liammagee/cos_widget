@@ -9,19 +9,6 @@ CoS.Assessment = function(ctx, config) {
     var height = config.height || 100;
     var width = config.width || 100;
     var useSameArea = config.useSameArea === false ? config.useSameArea : true;
-    var colours = config.colours || [
-        "#ED1C24", 
-        "#F26522", 
-        "#F7941E", 
-        "#FFC20E", 
-        "#FFF200", 
-        "#CBDB2A", 
-        "#8DC63F", 
-        "#39B44A", 
-        "#00A651" 
-    ];
-
-
     var radiusProportion = typeof(config.radiusProportion) !== 'undefined' ? config.radiusProportion : 0.9;
     var numCircles = config.numCircles || 9;
     var values = config.values || [];
@@ -67,6 +54,7 @@ CoS.Assessment = function(ctx, config) {
     }
 
     this.drawSegment = function(quadrant, sector, extent) {
+        var colours = ratings.map(function(c) {return c.color;});
         var colour = colours[extent - 1];
         var quadFac = Math.PI;
         var dirFac = 1;
