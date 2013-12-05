@@ -34,40 +34,12 @@
 	#slider {
     width: 300px;
 	}
-	#scale-value {
-	}
 	.scale-item {
 		width: 11%;
 		height: 15px;
 		float: left;
 	}
-	#vibrant {
-		background-color: #00A651;
-	}
-	#good {
-		background-color: #39B44A;
-	}
-	#highly-satisfactory {
-		background-color: #8DC63F;
-	}
-	#satisfactory-plus {
-		background-color: #CBDB2A;
-	}
-	#satisfactory {
-		background-color: #FFF200;
-	}
-	#satisfactory-minus {
-		background-color: #FFC20E;
-	}
-	#highly-unsatisfactory {
-		background-color: #F7941E;
-	}
-	#bad {
-		background-color: #F26522;
-	}
-	#critical {
-		background-color: #ED1C24;
-	}
+
 	</style>
 	<script type="text/javascript" language="javascript" src="jquery-ui/js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" language="javascript" src="jquery-ui/js/jquery-ui-1.8.20.custom.min.js"></script>
@@ -82,7 +54,6 @@
 		// Get the canvas
 	   canvas = $("#assessmentCanvas")[0];
 	   var ctx = canvas.getContext('2d');
-
 
 		 // Setup random data
 		 var values = new Array();
@@ -102,7 +73,7 @@
 		 	values:  values,
 		 	numCircles: numCircles,
 		 	radiusProportion: 0.75,
-		 	font: "bold 30px sans-serif",
+		 	font: "bold 20px sans-serif",
 		 	rotation: 0
 		 });
 
@@ -113,47 +84,21 @@
 	   $('#assessSlider').slider({ 
 	   		min: 1, max: 12, value: Math.ceil(numCircles / 2), step: 1,
 	   		slide: function(event, ui) {
-        	$("#slider-value").html(getRatingText(ui.value));
+        	$("#slider-value").html(assessment.getRatingText(ui.value - 1));
     		}
 	   	});
+
+	   // Add colors to slider
+	   var colours = $(".scale-item");
+	   for (var i = 0; i < colours.length; i++) {
+	   	var colourDiv = colours[i];
+	   	$(colourDiv).css({'background-color': assessment.getRatingColor(i)});
+	   }
 
 	   // Event handling
 	   addHandler();
 	});
 
-	var getRatingText = function(val) {
-			var displayText;
-			switch (val) {
-				case 1:
-					displayText = "Critical";
-					break;
-				case 2:
-					displayText = "Bad";
-					break;
-				case 3:
-					displayText = "Highly Unsatisfactory";
-					break;
-				case 4:
-					displayText = "Satisfactory-";
-					break;
-				case 5:
-					displayText = "Satisfactory";
-					break;
-				case 6:
-					displayText = "Satisfactory+";
-					break;
-				case 7:
-					displayText = "Highly Satisfactory";
-					break;
-				case 8:
-					displayText = "Good";
-					break;
-				case 9:
-					displayText = "Vibrant";
-					break;
-			}
-			return displayText;
-	}
 
 	function addHandler() {
 	    canvas.addEventListener('click', function(e){
@@ -199,7 +144,7 @@
 	         }
 	     });
       $('#assessSlider').slider({ min: 1, max: numCircles + 1, value: oldValue, step: 1 });
-	   $("#slider-value").html(getRatingText(oldValue));
+	    $("#slider-value").html(assessment.getRatingText(oldValue - 1));
 
 	    $('#assessmentDialog').dialog('open');
 	}
@@ -241,15 +186,15 @@
 	    </div>
 	    <div>Rate how sustainable you think your project is against this subdomain, on a scale of 1 (least sustainable) to 9 (most sustainable):</div>
 	    <div id="assessSlider">
-	    	<div class="scale-item" id="critical"></div>
-	    	<div class="scale-item" id="bad"></div>
-	    	<div class="scale-item" id="highly-unsatisfactory"></div>
-	    	<div class="scale-item" id="satisfactory-minus"></div>
-	    	<div class="scale-item" id="satisfactory"></div>
-	    	<div class="scale-item" id="satisfactory-plus"></div>
-	    	<div class="scale-item" id="highly-satisfactory"></div>
-	    	<div class="scale-item" id="good"></div>
-	    	<div class="scale-item" id="vibrant"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
+	    	<div class="scale-item"></div>
 	    	<div class="ui-slider-handle"></div> 
 	    </div>
 	    <div id="slider-value">

@@ -35,6 +35,17 @@ CoS.Assessment = function(ctx, config) {
 
         { name: 'Culture', subdomains: ["Identity & Engagement", "Creativity & Recreation", "Memory & Projection", "Belief & Ideas", "Gender & Generations", "Enquiry & Learning", "Health & Wellbeing"] }
         ];
+    var ratings = config.ratings || [
+        { label: "Critical", color: "#ED1C24" },
+        { label: "Bad", color: "#F26522" },
+        { label: "Highly Unsatisfactory", color: "#F7941E" },
+        { label: "Satisfactory-", color: "#FFC20E" },
+        { label: "Satisfactory", color: "#FFF200" },
+        { label: "Satisfactory+", color: "#CBDB2A" },
+        { label: "Highly Satisfactory", color: "#8DC63F" },
+        { label: "Good", color: "#39B44A" },
+        { label: "Vibrant", color: "#00A651" }
+    ];
 
     // Computed variables
     var x = Math.floor(width / 2), y = Math.floor(y = height / 2);
@@ -44,6 +55,7 @@ CoS.Assessment = function(ctx, config) {
     // Setup context
     ctx.lineWidth = config.lineWidth || 0.35;
     ctx.font = config.font || "18px sans-serif";
+    console.log(config.font)
     ctx.translate(x, y);
     ctx.rotate(rotation * Math.PI/180);
     ctx.translate(-x, -y);
@@ -58,22 +70,6 @@ CoS.Assessment = function(ctx, config) {
         var colour = colours[extent - 1];
         var quadFac = Math.PI;
         var dirFac = 1;
-        switch(quadrant) {
-            case 0:
-                quadFac /= -2;
-                break;
-            case 1:
-                quadFac /= -2;
-                dirFac = -1;
-                break;
-            case 2:
-                quadFac /= 2;
-                dirFac = -1;
-                break;
-            case 3:
-                quadFac /= 2;
-                break;
-        }
 
         var newRad = radius * extent / numCircles;
         if (useSameArea) {
@@ -84,7 +80,7 @@ CoS.Assessment = function(ctx, config) {
         var startArcY = y + Math.cos(quadFac * sector  / 7) * dirFac * newRad;
         var endArcX = x + Math.sin(quadFac * (sector + 1) / 7) * dirFac * newRad;
         var endArcY = y + Math.cos(quadFac * (sector + 1)  / 7) * dirFac * newRad;
-        var startAngle = Math.PI / 14 * (quadrant * 7 + sector);
+        var startAngle = Math.PI + Math.PI / 14 * (quadrant * 7 + sector);
         var endAngle = startAngle + Math.PI / 14;
 
 
@@ -200,6 +196,7 @@ CoS.Assessment = function(ctx, config) {
 
     this.drawAssessmentCircle = function() {
         // Draw segments lines
+        ctx.clearRect(0, 0, width, height);
         for (var i = 0; i < values.length; i++) {
             var domainValues = values[i];
             for (var j = 0; j < domainValues.length; j++) {
@@ -216,10 +213,11 @@ CoS.Assessment = function(ctx, config) {
 
     this.updateCircleSegment = function(domainId, subdomainId, extent) {
         values[domainId][subdomainId] = extent;
-        this.drawSegment(domainId, subdomainId, extent);
-        this.drawSegmentLines();
-        this.drawCircles();
-        this.drawAxes();
+        this.drawAssessmentCircle();
+        // this.drawSegment(domainId, subdomainId, extent);
+        // this.drawSegmentLines();
+        // this.drawCircles();
+        // this.drawAxes();
     } 
 
     this.findSegment = function(eventX, eventY, callback) {
@@ -230,31 +228,31 @@ CoS.Assessment = function(ctx, config) {
             // Which quadrant?
             var quadrant = 0;
             if (coordX < 0 && coordY < 0) {
-                quadrant = 2;
+                quadrant = 0;
             }
             else if (coordY < 0) {
-                quadrant = 3;
-            }
-            else if (coordX < 0) {
                 quadrant = 1;
             }
+            else if (coordX < 0) {
+                quadrant = 3;
+            }
             else  {
-                quadrant = 0;
+                quadrant = 2;
             }
             var angleInRadians = Math.atan(coordX / coordY);
             var angle = (angleInRadians * 2 / Math.PI) * 90;
             switch (quadrant) {
                 case 0:
-                    angle = (90 - angle);
+                    angle = 180 + (90 - angle);
                     break;
                 case 1:
-                    angle = (90 - angle);
+                    angle = 180 + (90 - angle);
                     break;
                 case 2:
-                    angle = 180 + (90 - angle);
+                    angle = (90 - angle);
                     break;
                 case 3:
-                    angle = 180 + (90 - angle);
+                    angle = (90 - angle);
                     break;
             }
             var currentDomain = domains[quadrant];
@@ -274,5 +272,12 @@ CoS.Assessment = function(ctx, config) {
     }
 
 
+    this.getRatingText = function(index) {
+        return ratings[index].label;
+    }
+
+    this.getRatingColor = function(index) {
+        return ratings[index].color;
+    }
 };
 
