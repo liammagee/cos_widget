@@ -8,19 +8,20 @@ CoS.Assessment = function(ctx, config) {
     // Configurable variables
     var height = config.height || 100;
     var width = config.width || 100;
-    var useSameArea = config.useSameArea === false ? config.useSameArea : true;
+    var useSameArea = config.useSameArea === false ? false : true;
+    var drawText = config.drawText === false ? false : true;
     var radiusProportion = typeof(config.radiusProportion) !== 'undefined' ? config.radiusProportion : 0.9;
     var numCircles = config.numCircles || 9;
     var values = config.values || [];
     var rotation = typeof(config.rotation) !== 'undefined' ? config.rotation : 0;
     var domains = config.domains || [ 
-        { name: 'Economics', subdomains: ["Production & Resourcing", "Exchange & Transfer", "Accounting & Regulation", "Consumption & Use", "Labour & Welfare", "Technology & Infrastructure", "Wealth & Distribution"] },
+        { name: 'Economics', subdomains: ["Wealth & Distribution", "Technology & Infrastructure", "Labour & Welfare", "Consumption & Use", "Accounting & Regulation", "Exchange & Transfer", "Production & Resourcing"] },
 
         { name: 'Ecology', subdomains: ["Materials & Energy", "Water & Air", "Flora & Fauna", "Habitat & Settlements", "Built Form & Transport", "Embodiment & Food", "Emission & Waste"] }, 
-        
-        { name: 'Politics', subdomains: ["Organization & Governance", "Law & Justice", "Communication & Critique", "Representation & Negotiation", "Security & Accord", "Dialogue & Reconciliation", "Ethics & Accountability"] }, 
 
-        { name: 'Culture', subdomains: ["Identity & Engagement", "Creativity & Recreation", "Memory & Projection", "Belief & Ideas", "Gender & Generations", "Enquiry & Learning", "Health & Wellbeing"] }
+        { name: 'Culture', subdomains: ["Identity & Engagement", "Creativity & Recreation", "Memory & Projection", "Belief & Ideas", "Gender & Generations", "Enquiry & Learning", "Health & Wellbeing"] }, 
+        
+        { name: 'Politics', subdomains: ["Ethics & Accountability", "Dialogue & Reconciliation", "Security & Accord", "Representation & Negotiation", "Communication & Critique", "Law & Justice", "Organization & Governance"        ] }
         ];
     var ratings = config.ratings || [
         { label: "Critical", color: "#ED1C24" },
@@ -33,16 +34,34 @@ CoS.Assessment = function(ctx, config) {
         { label: "Good", color: "#39B44A" },
         { label: "Vibrant", color: "#00A651" }
     ];
+    /*
+// Consider:
+//     darker vibrant green
+//     Change Satisfactory- to Unsatisfactory
+//     Change Satisfactory to Neither Satisfactory nor Unsatisfactory
+//     Change Satisfactory+ to Satisfactory
+    var ratings = config.ratings || [
+        { label: "Critical", color: "#ED1C24" },
+        { label: "Bad", color: "#F26522" },
+        { label: "Highly Unsatisfactory", color: "#F7941E" },
+        { label: "Unsatisfactory", color: "#FFC20E" },
+        { label: "Neither Unsatisfactory nor Satisfactory", color: "#FFF200" },
+        { label: "Satisfactory", color: "#CBDB2A" },
+        { label: "Highly Satisfactory", color: "#8DC63F" },
+        { label: "Good", color: "#39B44A" },
+        { label: "Vibrant", color: "#009631" }
+    ];
+    */
 
     // Computed variables
     var x = Math.floor(width / 2), y = Math.floor(y = height / 2);
     var radius = Math.floor(x * radiusProportion);
     var maxArea = Math.pow(radius, 2) * Math.PI;
+    var axisLength = config.axisLength || 1;
 
     // Setup context
-    ctx.lineWidth = config.lineWidth || 0.35;
+    ctx.lineWidth = config.lineWidth || 1;
     ctx.font = config.font || "18px sans-serif";
-    console.log(config.font)
     ctx.translate(x, y);
     ctx.rotate(rotation * Math.PI/180);
     ctx.translate(-x, -y);
@@ -138,15 +157,15 @@ CoS.Assessment = function(ctx, config) {
     this.drawAxes = function() {
         ctx.beginPath();
         ctx.moveTo(x, y);
-        ctx.lineTo(x, y - radius);
+        ctx.lineTo(x, y - radius * axisLength);
         ctx.moveTo(x, y);
-        ctx.lineTo(x, y + radius);
+        ctx.lineTo(x, y + radius * axisLength);
         ctx.moveTo(x, y);
-        ctx.lineTo(x - radius, y);
+        ctx.lineTo(x - radius * axisLength, y);
         ctx.moveTo(x, y);
-        ctx.lineTo(x + radius, y);
+        ctx.lineTo(x + radius * axisLength, y);
         ctx.closePath();
-        ctx.strokeStyle = "#000000";
+        ctx.strokeStyle = "#000";
         ctx.stroke();
     }
 
@@ -196,7 +215,8 @@ CoS.Assessment = function(ctx, config) {
         this.drawSegmentLines();
         this.drawCircles();
         this.drawAxes();
-        this.drawText();
+        if (drawText)
+            this.drawText();
     }
 
     this.updateCircleSegment = function(domainId, subdomainId, extent) {
@@ -253,9 +273,6 @@ CoS.Assessment = function(ctx, config) {
                 newValue = Math.ceil(newArea / maxArea * numCircles);
             }
             callback(quadrant, currentDomain.name, subdomainId, currentSubdomain, oldValue, newValue);
-        }
-        else {
-            console.log("No subdomain selected.");
         }
     }
 
