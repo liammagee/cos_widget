@@ -1,0 +1,37 @@
+	* {
+		font-family: sans-serif;
+	}
+	label {
+		font-weight: bold;
+	}
+	#assessmentDialog > div {
+		margin-bottom: 1em;
+	}
+	#circles {
+		float: left;
+		width: 50%;
+	}
+	#control-panel {
+		float: right;
+		width: 50%;
+	}
+	.ui-slider {
+		border: none;
+		left: 0px;
+	}
+	.ui-slider .ui-slider-handle { 
+     position: absolute;
+      cursor: hand;
+      width: 27px;
+      left: 0px;
+      margin-left: 0px;
+	}
+	#slider {
+    width: 300px;
+	}
+	.scale-item {
+		width: 11%;
+		height: 15px;
+		float: left;
+	}
+
