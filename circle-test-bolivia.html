@@ -1,0 +1,65 @@
+<html>
+<head>
+    <title>CoS test</title>
+    <link href="javascripts/jquery-ui/css/smoothness/jquery-ui-1.8.20.custom.css" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/circles.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="javascripts/jquery-ui/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="javascripts/jquery-ui/js/jquery-ui-1.8.20.custom.min.js"></script>
+    <script type="text/javascript" src="javascripts/circles.js" ></script>
+    <script type="text/javascript" src="javascripts/circles-bolivia.js" ></script>
+    <!-- <script type="text/javascript" src="javascripts/engagement-circles.js" ></script> -->
+<!--      <script type="text/javascript" src="javascripts/process-circles.js" ></script>
+   <script type="text/javascript" src="javascripts/knowledge-circles.js" ></script>
+    <script type="text/javascript" src="javascripts/engagement-circles.js" ></script>
+ -->    <script type="text/javascript" src="javascripts/interaction.js" ></script>
+
+ </script>
+
+</head>
+<body>
+
+    <div>
+        <div id="circles">
+        <canvas id="circleCanvas" width="600" height="600" ></canvas>
+        </div>
+        <div id="tooltip"></div>
+        <div id="control-panel">
+            <div>
+              Show dialog<input type="checkbox" id="showDialog" name="showDialog" checked="checked">
+            </div>
+              <div id="tooltip"></div>
+            <div>
+              <input type="button" id="btnReset" name="btnReset" value="Reset">
+            </div>
+        </div>
+    </div>
+
+    <div id="assessmentDialog" style="display: none;">
+        <div>
+            <label for="assessDomain">Domain: </label>
+            <span id="assessDomain"></span>
+        </div>
+        <div>
+            <label for="assessSubdomain">Subdomain: </label>
+            <span id="assessSubdomain"></span>
+        </div>
+        <div>Rate how sustainable you think your project is against this subdomain, on a scale of 1 (least sustainable) to 9 (most sustainable):</div>
+        <div id="assessSlider">
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="scale-item"></div>
+            <div class="ui-slider-handle"></div>
+        </div>
+        <div id="slider-value">
+        </div>
+    </div>
+
+</body>
+</html>
