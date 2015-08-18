@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
 var values = new Array();
     for (var i = 0; i < 4; i++) {
         var domainValues = new Array();
-        for (var j = 0; j < 7; j++) {
+        for (var j = 0; j < 4; j++) {
             var extent = Math.ceil(Math.random() * numCircles);
             domainValues.push(extent);
         }
