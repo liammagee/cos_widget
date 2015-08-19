@@ -7,7 +7,7 @@ jQuery(document).ready(function() {
    canvas = jQuery("#circleCanvas")[0];
    var ctx = canvas.getContext('2d');
      /* Setup random data */
-var values = new Array();
+    var values = new Array();
     for (var i = 0; i < 4; i++) {
         var domainValues = new Array();
         for (var j = 0; j < 4; j++) {

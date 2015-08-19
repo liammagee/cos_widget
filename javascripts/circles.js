@@ -16,7 +16,8 @@ CoS.GenericCircle = function( ctx, config ) {
     var numCircles = config.numCircles || 9;
     this.numDomains = config.numDomains || 4;
     this.numSubdomains = config.numSubdomains || 7;
-    var values = config.values || [];
+
+    this.values = config.values || [];
     var rotation = typeof(config.rotation) !== 'undefined' ? config.rotation : 0;
 
     this.domains = config.domains || [
@@ -75,9 +76,24 @@ CoS.GenericCircle = function( ctx, config ) {
     ctx.translate(-x, -y);
 
 
+    this.resetValues = function( randomise ) {
+        var domainValues = [];
+        for ( var i = 0; i < this.numDomains; i++ ) {
+            subdomainValues = [];
+            for ( var j = 0; j < this.numSubdomains; j++ ) {
+                var val = 0;
+                if ( randomise )
+                    val = Math.ceil(Math.random() * numCircles)
+                subdomainValues.push( val );
+            }
+            domainValues.push(subdomainValues);
+        }
+        this.refreshValues(domainValues);
+    };
+
     this.refreshValues = function(vals) {
-        values = vals;
-        this.drawCircle();
+        this.values = vals;
+        this.drawCompleteCircle();
     }
 
     this.drawSegment = function(quadrant, sector, extent) {
@@ -218,8 +234,8 @@ CoS.GenericCircle = function( ctx, config ) {
     this.drawCompleteCircle = function() {
         // Draw segments lines
         ctx.clearRect(0, 0, width, height);
-        for (var i = 0; i < values.length; i++) {
-            var domainValues = values[i];
+        for (var i = 0; i < this.values.length; i++) {
+            var domainValues = this.values[i];
             for (var j = 0; j < domainValues.length; j++) {
                 this.drawSegment(i, j, domainValues[j]);
             }
@@ -234,7 +250,7 @@ CoS.GenericCircle = function( ctx, config ) {
     }
 
     this.updateCircleSegment = function(domainId, subdomainId, extent) {
-        values[domainId][subdomainId] = extent;
+        this.values[domainId][subdomainId] = extent;
         this.drawCompleteCircle();
         // this.drawSegment(domainId, subdomainId, extent);
         // this.drawSegmentLines();
@@ -280,7 +296,7 @@ CoS.GenericCircle = function( ctx, config ) {
             var currentDomain = this.domains[quadrant];
             var subdomainId = Math.floor((angle / 360) * (4 * 7)) % 7;
             var currentSubdomain = currentDomain.subdomains[subdomainId];
-            oldValue = values[quadrant][subdomainId];
+            oldValue = this.values[quadrant][subdomainId];
             var newValue = Math.floor((hypotenuse / radius) * numCircles) + 1;
             if (useSameArea) {
                 var newArea = Math.pow(hypotenuse, 2) * Math.PI;
@@ -312,7 +328,7 @@ CoS.Process = function(ctx, config) {
     var radiusProportion = typeof(config.radiusProportion) !== 'undefined' ? config.radiusProportion : 0.9;
     var textRadiusProportion = typeof(config.textRadiusProportion) !== 'undefined' ? config.textRadiusProportion : 1.05;
     var numCircles = config.numCircles || 9;
-    var values = config.values || [];
+    this.values = config.values || [];
     var rotation = typeof(config.rotation) !== 'undefined' ? config.rotation : 0;
     var fontColor = config.fontColor || "#000000";
     var phases = config.phases || [
@@ -341,7 +357,7 @@ CoS.Process = function(ctx, config) {
 
 
     this.refreshValues = function(vals) {
-        values = vals;
+        this.values = vals;
         this.drawCompleteCircle();
     }
 
