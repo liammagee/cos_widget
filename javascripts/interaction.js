@@ -1,32 +1,47 @@
 
 /* Handles interaction with the circle circles. */
 
-var circle, canvas, numCircles = 5;
-jQuery(document).ready(function() {
+var circle, canvas, numCircles = 9, circleType = "Profile";
+
+var config = {
+    width: 600,
+    height: 600,
+    numCircles: numCircles,
+    drawText: true,
+    axisLength: 1.2,
+    axisWidth: 2,
+    lineWidth: 1,
+    radiusProportion: 0.75,
+    font: "bold 20px sans-serif",
+    rotation: 0
+};
+
+var setFactory = function() {
+    if ( circleType === "Profile" ) {
+        CoS.circleFactory = CoS.Profile;
+    }
+    else if ( circleType === "Process" ) {
+        CoS.circleFactory = CoS.Process;
+    }
+    else if ( circleType === "Knowledge" ) {
+        CoS.circleFactory = CoS.Knowledge;
+    }
+    else if ( circleType === "Engagement" ) {
+        CoS.circleFactory = CoS.Engagement;
+    }
+}
+
+var buildCircle = function() {
     /* Get the canvas */
    canvas = jQuery("#circleCanvas")[0];
    var ctx = canvas.getContext('2d');
 
-    /* Setup random data */
-
     /* Create the Assessment */
-    circle = new CoS.circleFactory(ctx, {
-        width: 600,
-        height: 600,
-        numCircles: numCircles,
-        drawText: true,
-        axisLength: 1.2,
-        axisWidth: 2,
-        lineWidth: 1,
-        radiusProportion: 0.75,
-        font: "bold 20px sans-serif",
-        rotation: 0
-    });
+    circle = new CoS.circleFactory(ctx, config );
     circle.resetValues();
-   circle.drawCompleteCircle();
-   /* Event handling */
-   addHandler();
-});
+    circle.drawCompleteCircle();
+
+};
 
 var addHandler = function() {
     canvas.addEventListener('click', function(e){
@@ -42,11 +57,15 @@ var addHandler = function() {
     });
     jQuery( '#btnReset' ).click( reset );
     jQuery( '#btnRandomise' ).click( randomise );
+    jQuery( '#circleType' ).change( updateCircleType );
 }
+
 var determinePoint = function(e) {
     e = jQuery.event.fix(e || window.event);
     return {x: e.offsetX, y: e.offsetY};
 }
+
+
 var drawSegment = function drawSegment(domainId, domainName, subdomainId, subdomainName, oldValue, newValue) {
    /* saveAssessment(extent); */
    circle.updateCircleSegment(domainId, subdomainId, newValue);
@@ -59,4 +78,13 @@ var reset = function() {
 }
 var randomise = function() {
     circle.resetValues( true );
+}
+
+var updateCircleType = function( obj ) {
+
+    circleType = obj.target.selectedOptions[0].text;
+
+    setFactory();
+
+    buildCircle();
 }

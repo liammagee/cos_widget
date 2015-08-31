@@ -294,7 +294,7 @@ CoS.GenericCircle = function( ctx, config ) {
                     break;
             }
             var currentDomain = this.domains[quadrant];
-            var subdomainId = Math.floor((angle / 360) * (4 * 7)) % 7;
+            var subdomainId = Math.floor((angle / 360) * (4 * this.numSubdomains) ) % this.numSubdomains;
             var currentSubdomain = currentDomain.subdomains[subdomainId];
             oldValue = this.values[quadrant][subdomainId];
             var newValue = Math.floor((hypotenuse / radius) * numCircles) + 1;

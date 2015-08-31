@@ -22,3 +22,11 @@ CoS.ProfileBolivia.prototype = Object.create(CoS.GenericCircle.prototype);
 // Register this as the circle factory class
 CoS.circleFactory = CoS.ProfileBolivia;
 
+
+jQuery(document).ready(function() {
+
+   buildCircle();
+
+   /* Event handling */
+   addHandler();
+});
