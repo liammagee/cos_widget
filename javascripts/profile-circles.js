@@ -6,5 +6,5 @@ jQuery(document).ready(function() {
    buildCircle();
 
    /* Event handling */
-   addHandler();
+   addHandler(drawSegment, showSubdomain);
 });

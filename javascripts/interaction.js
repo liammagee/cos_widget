@@ -43,17 +43,23 @@ var buildCircle = function() {
 
 };
 
-var addHandler = function() {
+var addHandler = function(callbackClick, callbackMove) {
+    if (callbackClick === null) {
+      callbackClick = drawSegment;
+    }
+    if (callbackMove === null) {
+      callbackMove = showSubdomain;
+    }
     canvas.addEventListener('click', function(e){
         var point = determinePoint(e);
         if ( jQuery('#showDialog').length > 0 && jQuery('#showDialog')[ 0 ].checked )
-            circle.findSegment(point.x, point.y, drawSegment);
+            circle.findSegment(point.x, point.y, callbackClick);
         else
-            circle.findSegment(point.x, point.y, drawSegment);
+            circle.findSegment(point.x, point.y, callbackClick);
     });
     canvas.addEventListener('mousemove', function(e){
         var point = determinePoint(e);
-        circle.findSegment(point.x, point.y, showSubdomain);
+        circle.findSegment(point.x, point.y, callbackMove);
     });
     jQuery( '#btnReset' ).click( reset );
     jQuery( '#btnRandomise' ).click( randomise );
@@ -83,6 +89,24 @@ var randomise = function() {
 var updateCircleType = function( obj ) {
 
     circleType = obj.target.selectedOptions[0].text;
+
+    if (circleType === "Process") {
+        numCircles = 2;
+        config = {
+            useSameArea: false,
+            width: 200,
+            height: 200,
+            values:  [],
+            numCircles: numCircles,
+            drawText: true,
+            axisLength: 1.2,
+            lineWidth: 1.5,
+            radiusProportion: 0.95,
+            textRadiusProportion: 0.75,
+            font: "bold 12px sans-serif",
+            rotation: 0
+        };
+    }
 
     setFactory();
 
